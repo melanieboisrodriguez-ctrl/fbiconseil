@@ -684,6 +684,7 @@ p {
 }
 
 /* Mobile hero layout - PHOTO FIRST (≤ 600px) */
+/* Styles mobile optimisés - dernière mise à jour */
 @media (max-width: 600px) {
     /* Base hero grid pour mobile */
     .hero {
