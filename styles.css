@@ -206,7 +206,7 @@ p {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(2rem, 4vw, 3.75rem);
-    align-items: start; /* Aligne la photo avec le début du texte */
+    align-items: stretch; /* Permet à la photo de prendre toute la hauteur disponible */
 }
 
 .hero-text {
@@ -238,11 +238,9 @@ p {
     border-radius: 3px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 3 / 4; /* Ratio portrait pour une meilleure composition */
-    max-width: 100%;
+    width: 100%;
+    height: 100%; /* Prend toute la hauteur disponible de la grille */
+    align-self: stretch; /* S'étire pour correspondre à la hauteur du contenu texte */
 }
 
 .hero-image img {
@@ -251,6 +249,8 @@ p {
     display: block;
     object-fit: cover; /* Recadre la photo pour remplir le conteneur */
     object-position: center top; /* Centre le visage en haut pour un meilleur cadrage */
+    transform: scale(1.15); /* Zoom légèrement la photo sur desktop */
+    transform-origin: center top; /* Point d'origine du zoom */
 }
 
 /* Buttons */
@@ -566,7 +566,7 @@ p {
 /* Mobile photo adjustment (< 600px) */
 @media (max-width: 600px) {
     .hero-image {
-        width: 85%;               /* réduit la largeur = meilleur cadrage */
+        width: 100%;              /* Prend toute la largeur sur mobile */
         margin: 0 auto;           /* centre la photo */
         aspect-ratio: auto;       /* Supprime le ratio fixe sur mobile */
         max-width: 100%;
@@ -576,8 +576,9 @@ p {
         width: 100%;
         height: auto;
         object-fit: contain !important;
-        object-position: center top;
+        object-position: center 25%; /* Positionne la photo pour garder la tête visible avec un bon cadrage */
         display: block;
+        transform: none !important; /* Pas de zoom sur mobile */
     }
 }
 
@@ -600,13 +601,14 @@ p {
     .hero-image {
         max-width: 100%;
         aspect-ratio: auto;       /* Supprime le ratio fixe sur très petit mobile */
-        width: 85%;               /* Réduit la largeur pour un meilleur cadrage */
+        width: 100%;              /* Prend toute la largeur */
         margin: 0 auto;           /* Centre la photo */
     }
     
     .hero-image img {
         height: auto !important;  /* Force la hauteur automatique */
         object-fit: contain !important;
+        object-position: center 25%; /* Positionne la photo pour garder la tête visible avec un bon cadrage */
     }
     
     .hero-text {
