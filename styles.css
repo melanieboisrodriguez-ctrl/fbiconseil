@@ -27,6 +27,11 @@ body {
     background-color: var(--background);
 }
 
+/* No horizontal scroll anywhere */
+html, body {
+    overflow-x: hidden;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -97,6 +102,52 @@ p {
     background: var(--background); /* couleur/fond du header */
     z-index: 1;               /* au-dessus du logo */
     pointer-events: none;
+}
+
+/* Mobile header adjustments (≤ 600px) */
+@media (max-width: 600px) {
+    .header {
+        padding-block: 8px;
+        min-height: clamp(70px, 9vh, 100px); /* Augmente la hauteur pour accommoder le logo agrandi */
+    }
+    
+    /* Supprimer l'overlay pour éviter la barre blanche */
+    .header::before,
+    .header::after {
+        content: none !important;
+    }
+    
+    /* Agrandir le logo sur mobile */
+    .logo {
+        width: clamp(10rem, 32vw, 14rem) !important; /* Légèrement réduit */
+    }
+    
+    .logo-img {
+        transform: scale(1.1) !important; /* Agrandi le logo de 10% */
+        transform-origin: left center;
+    }
+    
+    /* Nav reste inline à droite si l'espace le permet */
+    .nav {
+        display: flex !important;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        background: transparent;
+        padding: 0;
+        z-index: 10;
+        flex-shrink: 1; /* Permet à la nav de rétrécir si nécessaire */
+    }
+    
+    .header,
+    .nav,
+    .nav ul {
+        text-align: left !important;
+    }
+    
+    /* Ajuster le margin-top du hero pour éviter le chevauchement avec le logo agrandi */
+    .hero {
+        margin-top: clamp(70px, 9vh, 100px) !important;
+    }
 }
 
 .header .container {
@@ -248,6 +299,29 @@ p {
     .hero-image {
         height: 100%;
         align-self: stretch;
+        box-shadow: none; /* Enlève la barre bleue en relief sous la photo */
+    }
+}
+
+/* Desktop uniquement : agrandir le logo (version web) */
+@media (min-width: 1024px) {
+    .logo {
+        width: clamp(13rem, 16vw, 18rem); /* Agrandi le logo */
+    }
+    
+    .logo-img {
+        transform: scale(1.15); /* Agrandi le logo de 15% */
+        transform-origin: left center;
+    }
+    
+    /* Ajuster le header pour accommoder le logo agrandi */
+    .header {
+        min-height: clamp(85px, 11vh, 130px); /* Augmente la hauteur pour éviter le chevauchement */
+    }
+    
+    /* Ajuster le margin-top du hero pour éviter le chevauchement */
+    .hero {
+        margin-top: clamp(85px, 11vh, 130px);
     }
 }
 
@@ -571,25 +645,100 @@ p {
     }
 }
 
-/* Mobile photo adjustment (< 600px) */
+/* Mobile hero layout - PHOTO FIRST (≤ 600px) */
 @media (max-width: 600px) {
-    .hero-image {
-        width: 100% !important;   /* Prend toute la largeur disponible sur mobile */
-        height: auto !important;   /* Hauteur automatique sur mobile pour garder la taille naturelle */
-        margin: 0 auto;            /* centre la photo */
-        aspect-ratio: auto;       /* Supprime le ratio fixe sur mobile */
-        max-width: none !important; /* Pas de limitation de largeur */
-        align-self: auto;          /* Réinitialise l'align-self sur mobile */
+    /* Base hero grid pour mobile */
+    .hero {
+        display: grid;
+        align-items: center;
+        grid-template-columns: 1fr;
+        row-gap: 0; /* Pas d'espace entre photo et texte */
+        padding: clamp(16px, 4vh, 32px) clamp(16px, 5vw, 32px);
+        overflow: visible;
+        min-height: 86vh; /* Keep the CTA within first view as much as possible */
     }
-
-    .hero-image img {
-        width: 100% !important;
-        height: auto !important;
-        min-height: 400px;         /* Hauteur minimale pour une photo plus grande */
-        object-fit: contain !important;
-        object-position: center 25%; /* Positionne la photo pour garder la tête visible avec un bon cadrage */
+    
+    .hero .container {
+        padding: 0;
+    }
+    
+    .hero-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0; /* Pas d'espace entre photo et texte */
+    }
+    
+    /* Reorder: photo first, then text */
+    .hero-image {
+        order: 1;
+        width: 100%;
+        margin: 0;
+        align-self: center;
+        box-shadow: none !important; /* Enlève le cadre bleu en relief */
+        border: none !important; /* Pas de bordure */
+        border-radius: 0 !important; /* Pas de coins arrondis */
+        padding: 0 !important; /* Pas de padding */
+    }
+    
+    .hero-text {
+        order: 2;
+        display: flex;
+        flex-direction: column;
+        gap: clamp(8px, 2vh, 16px);
+        margin-top: -20px !important; /* Remonte le texte directement contre la photo */
+        padding-top: 0 !important; /* Pas de padding en haut */
+        margin-bottom: 0 !important; /* Pas de marge en bas */
+        padding-bottom: 0 !important; /* Pas de padding en bas */
+        padding-block-end: 0 !important; /* Supprime le padding en bas du style de base */
+    }
+    
+    /* Photo wrapper sizing */
+    .hero-photo-wrapper {
+        width: clamp(320px, 85vw, 480px); /* Élargi davantage */
+        margin: clamp(20px, 3vh, 28px) auto -20px; /* Augmente la marge en haut pour descendre la photo et laisser plus de bleu */
+        aspect-ratio: 3 / 4;
+        border-radius: 0; /* Cadre rectangulaire sans coins arrondis */
+        overflow: hidden;
+        box-shadow: none; /* Enlève le cadre bleu en relief */
+        border: none; /* Pas de bordure */
+        padding: 0; /* Pas de padding */
+    }
+    
+    .hero-photo-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Dézoome la photo (contain au lieu de cover) */
+        object-position: center top; /* Centre en haut pour garder la tête visible */
         display: block;
-        transform: none !important; /* Pas de zoom sur mobile */
+        margin: 0; /* Pas de marge */
+        padding: 0; /* Pas de padding */
+    }
+    
+    /* Typography & CTA */
+    .hero-title {
+        font-size: clamp(1.6rem, 4.8vw, 2.4rem);
+        line-height: 1.15;
+        margin: 0;
+        text-wrap: balance;
+    }
+    
+    .hero-description {
+        font-size: clamp(1.125rem, 4.5vw, 1.375rem); /* Grossi pour être plus lisible */
+        margin: 0.5rem 0 0;
+        opacity: 0.95;
+        line-height: 1.6; /* Améliore la lisibilité */
+    }
+    
+    .hero-text .btn {
+        margin-top: clamp(0.75rem, 2.5vh, 1.25rem);
+        padding: clamp(0.75rem, 2.5vh, 1rem) clamp(1rem, 5vw, 1.25rem);
+        border-radius: 0; /* Coins carrés */
+        font-weight: 700;
+    }
+    
+    .hero-text .btn:focus-visible {
+        outline: 3px solid #ffd666;
+        outline-offset: 3px;
     }
 }
 
