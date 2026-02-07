@@ -323,16 +323,54 @@ p {
     .hero {
         margin-top: clamp(85px, 11vh, 130px);
     }
+    
+    /* Styles desktop pour la photo wrapper - agrandir sans zoomer */
+    .hero-photo-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: flex-end; /* Aligne la photo en bas pour correspondre au bouton */
+        min-height: 100%; /* Force la hauteur minimale */
+    }
+    
+    .hero-photo-wrapper img {
+        width: 100%;
+        height: 100%;
+        min-height: 100%; /* Force la hauteur minimale pour agrandir la photo */
+        object-fit: cover; /* Remplit le conteneur */
+        object-position: center top; /* Centre le visage en haut */
+        display: block;
+    }
+    
+    /* S'assurer que la photo s'étend jusqu'en bas du bouton */
+    .hero-image {
+        height: 100%;
+        align-self: stretch;
+        display: flex;
+        align-items: flex-end;
+        box-shadow: none; /* Supprime la barre bleue en relief sur desktop */
+        border-radius: 0; /* Pas de coins arrondis sur desktop */
+        overflow: visible; /* Permet à la photo de s'étendre */
+    }
+    
+    /* Aligner le texte avec la photo */
+    .hero-text {
+        align-self: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
 }
 
-.hero-image img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover; /* Recadre la photo pour remplir le conteneur */
-    object-position: center top; /* Centre le visage en haut pour un meilleur cadrage */
-    transform: scale(1.15); /* Zoom légèrement la photo sur desktop */
-    transform-origin: center top; /* Point d'origine du zoom */
+/* Styles de base pour hero-image img (mobile et tablette) */
+@media (max-width: 1023px) {
+    .hero-image img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        object-position: center top;
+    }
 }
 
 /* Buttons */
