@@ -79,8 +79,9 @@ p {
     /* alignement identique */
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    /* garde tes paddings/hauteur existants */
     gap: clamp(0.5rem, 1.2vw, 1rem);
+    text-align: left; /* Neutralise tout centrage hérité */
     /* essentiel : autoriser le débordement visuel du logo */
     overflow: visible;
     /* Si le header est sticky, verrouille la stabilité du rendu */
@@ -118,6 +119,7 @@ p {
 }
 
 /* 2) Le conteneur du logo conserve sa largeur réservée, mais n'impose pas de hauteur */
+/* Le logo conserve sa place */
 .logo {
     flex: 0 0 auto;
     width: clamp(11rem, 14vw, 16rem);
@@ -133,15 +135,20 @@ p {
 
 /* 4) Le nav garde sa flexibilité (ne crée pas de wrap intempestif) */
 /* 3) La nav et les actions passent au-dessus de l'overlay */
+/* --- NAV : à droite, sur une seule ligne --- */
 .nav {
     position: relative;
     z-index: 2;
-    flex: 1 1 auto;
-    min-width: 0;
+    margin-left: auto;           /* pousse la nav à droite */
     display: flex;
-    justify-content: flex-end;
-    gap: clamp(0.5rem, 1.2vw, 1rem);
+    flex-direction: row;         /* Force l'alignement horizontal */
+    align-items: center;
+    justify-content: flex-end;   /* items alignés à droite */
+    flex-wrap: nowrap;           /* Ne passe jamais à la ligne */
+    min-width: 0;                /* permet de rétrécir sans overflow */
+    text-align: left;             /* Neutralise tout centrage hérité */
     line-height: 1; /* réduit la "prise" verticale des liens */
+    gap: clamp(0.75rem, 1.5vw, 1.5rem); /* Espacement entre les liens */
 }
 
 /* 3) L'image du logo garde sa "grandeur" visuelle sans forcer la hauteur du header */
@@ -169,6 +176,10 @@ p {
     color: var(--text);
     text-decoration: none;
     transition: color var(--transition);
+    display: inline-flex;        /* évite les retours à la ligne parasites */
+    align-items: center;
+    line-height: 1.2;
+    white-space: nowrap;         /* pas de retour à la ligne des libellés */
 }
 
 .nav a:hover {
@@ -518,7 +529,9 @@ p {
         padding-block: clamp(1.5rem, 5vh, 2.5rem);
     }
     
+    /* Mobile : garde le menu à droite (si tu n'ouvres pas de burger) */
     .nav {
+        justify-content: flex-end;
         gap: clamp(0.75rem, 2vw, 1rem);
     }
 }
@@ -548,12 +561,31 @@ p {
     .hero {
         margin-top: clamp(60px, 7vh, 90px);
     }
+}
+
+/* Mobile photo adjustment (< 600px) */
+@media (max-width: 600px) {
+    .hero-image {
+        width: 85%;               /* réduit la largeur = meilleur cadrage */
+        margin: 0 auto;           /* centre la photo */
+        aspect-ratio: auto;       /* Supprime le ratio fixe sur mobile */
+        max-width: 100%;
+    }
+
+    .hero-image img {
+        width: 100%;
+        height: auto;
+        object-fit: contain !important;
+        object-position: center top;
+        display: block;
+    }
+}
 
     .nav {
-        flex-direction: column;
-        gap: clamp(0.625rem, 1.5vh, 0.9375rem);
-        text-align: center;
-        justify-content: center;
+        flex-direction: row;     /* Garde l'alignement horizontal même sur mobile */
+        gap: clamp(0.5rem, 1.2vw, 1rem);
+        justify-content: flex-end; /* Garde le menu à droite */
+        text-align: left;
     }
     
     .hero {
@@ -567,6 +599,14 @@ p {
     
     .hero-image {
         max-width: 100%;
+        aspect-ratio: auto;       /* Supprime le ratio fixe sur très petit mobile */
+        width: 85%;               /* Réduit la largeur pour un meilleur cadrage */
+        margin: 0 auto;           /* Centre la photo */
+    }
+    
+    .hero-image img {
+        height: auto !important;  /* Force la hauteur automatique */
+        object-fit: contain !important;
     }
     
     .hero-text {
@@ -582,5 +622,12 @@ p {
     
     .logo-img {
         transform: scale(0.8505); /* 0.945 * 0.9 = 10% de réduction supplémentaire */
+    }
+}
+
+/* Si l'écran est vraiment étroit, on préfère réduire l'espace avant de "casser" */
+@media (max-width: 390px) {
+    .nav {
+        gap: 0.5rem;
     }
 }
