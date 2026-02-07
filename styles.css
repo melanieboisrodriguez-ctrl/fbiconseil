@@ -11,6 +11,12 @@
     --background: #FFFFFF;
     --text: #333333;
     --transition: 200ms;
+    --header-padding-block: clamp(0.75rem, 1.5vw, 1.25rem);
+    --header-padding-inline: clamp(1rem, 2vw, 2rem);
+    --logo-width-desktop: clamp(8rem, 12vw, 12rem);
+    --logo-width-tablet: clamp(7rem, 10vw, 9rem);
+    --logo-width-mobile: clamp(6rem, 15vw, 8rem);
+    --header-height: clamp(4rem, 8vh, 5rem);
 }
 
 body {
@@ -56,19 +62,68 @@ p {
 }
 
 /* Header */
+/* 1) Contexte d'empilement et couche de fond du header */
 .header {
     background-color: var(--background);
-    padding: 20px 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     z-index: 100;
+    /* Contexte d'empilement isolé pour le header */
+    isolation: isolate;      /* crucial pour "contenir" le z-index négatif */
+    /* hauteur augmentée */
+    min-height: clamp(80px, 10vh, 120px);
+    /* alignement identique */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(0.5rem, 1.2vw, 1rem);
+    /* essentiel : autoriser le débordement visuel du logo */
+    overflow: visible;
+    /* Si le header est sticky, verrouille la stabilité du rendu */
+    backface-visibility: hidden;
+    transform: translateZ(0);
 }
 
+/* 2) Overlay de fond qui recouvre tout débord du logo */
+.header::after {
+    content: "";
+    position: absolute;
+    inset: 0;                 /* couvre tout le header */
+    background: var(--background); /* couleur/fond du header */
+    z-index: 1;               /* au-dessus du logo */
+    pointer-events: none;
+}
+
+.header .container {
+    padding-block: clamp(0.25rem, 0.6vh, 0.5rem);
+    padding-inline: clamp(1rem, 2vw, 2rem);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(0.5rem, 1.2vw, 1rem);
+}
+
+/* HEADER de base : répartition stable */
 .header-content {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: clamp(0.5rem, 1.2vw, 1rem);
+    width: 100%;
+}
+
+/* 2) Le conteneur du logo conserve sa largeur réservée, mais n'impose pas de hauteur */
+.logo {
+    flex: 0 0 auto;
+    width: clamp(11rem, 14vw, 16rem);
+    display: grid;
+    place-items: center;
+    overflow: visible; /* pour laisser le logo dépasser si besoin */
 }
 
 .logo h1 {
@@ -76,9 +131,36 @@ p {
     margin: 0;
 }
 
+/* 4) Le nav garde sa flexibilité (ne crée pas de wrap intempestif) */
+/* 3) La nav et les actions passent au-dessus de l'overlay */
 .nav {
+    position: relative;
+    z-index: 2;
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
-    gap: 30px;
+    justify-content: flex-end;
+    gap: clamp(0.5rem, 1.2vw, 1rem);
+    line-height: 1; /* réduit la "prise" verticale des liens */
+}
+
+/* 3) L'image du logo garde sa "grandeur" visuelle sans forcer la hauteur du header */
+.logo-img {
+    position: relative;
+    z-index: 3;             /* au-dessus de l'overlay pour être visible */
+    /* garde tes réglages existants */
+    width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0;
+    padding: 0;
+    transform: scale(1.0935); /* 1.215 * 0.9 = 10% de réduction supplémentaire */
+    transform-origin: left center;
+    will-change: transform;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
 
 .nav a {
@@ -97,61 +179,84 @@ p {
 .hero {
     background-color: var(--primary);
     color: var(--background);
-    padding: 80px 0;
+    min-height: calc(100vh - clamp(80px, 10vh, 120px));
+    padding-block: clamp(2rem, 8vh, 4rem);
+    padding-inline: 0;
+    margin-top: clamp(80px, 10vh, 120px);
+    overflow: visible;
 }
 
 .hero h1 {
     color: var(--background);
-    margin-bottom: 30px;
+    margin-bottom: 0;
 }
 
 .hero-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
+    gap: clamp(2rem, 4vw, 3.75rem);
+    align-items: start; /* Aligne la photo avec le début du texte */
 }
 
 .hero-text {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: clamp(1.25rem, 2.5vh, 1.875rem);
+    padding-block-end: clamp(1rem, 3vh, 2rem);
+    align-self: start; /* Assure l'alignement avec la photo */
 }
 
 .hero-title {
-    font-size: 64px;
+    font-size: clamp(2.25rem, 4.5vw, 4rem);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    text-wrap: balance;
+    margin-bottom: clamp(0.75rem, 1.5vh, 1rem);
 }
 
 .hero-description {
-    font-size: 22px;
+    font-size: clamp(1.125rem, 1.8vw, 1.375rem);
     color: var(--background);
     opacity: 0.95;
+    line-height: 1.6;
+    margin-bottom: clamp(0.5rem, 1vh, 0.75rem);
 }
 
 .hero-image {
     border-radius: 3px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3 / 4; /* Ratio portrait pour une meilleure composition */
+    max-width: 100%;
 }
 
 .hero-image img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
+    object-fit: cover; /* Recadre la photo pour remplir le conteneur */
+    object-position: center top; /* Centre le visage en haut pour un meilleur cadrage */
 }
 
 /* Buttons */
 .btn {
     display: inline-block;
-    padding: 15px 35px;
+    padding: clamp(0.875rem, 1.5vh, 0.9375rem) clamp(1.75rem, 3vw, 2.1875rem);
     border-radius: 3px;
     text-decoration: none;
     font-family: 'Raleway', sans-serif;
-    font-size: 18px;
+    font-size: clamp(1rem, 1.2vw, 1.125rem);
     font-weight: 500;
     transition: all var(--transition);
     border: none;
     cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+    margin-block-start: clamp(1rem, 2vh, 1.5rem);
 }
 
 .btn-primary {
@@ -165,6 +270,12 @@ p {
     box-shadow: 0 4px 8px rgba(204, 24, 24, 0.3);
 }
 
+.btn-primary:focus-visible {
+    outline: 3px solid var(--background);
+    outline-offset: 2px;
+    background-color: var(--accent);
+}
+
 .btn-secondary {
     background-color: var(--primary);
     color: var(--background);
@@ -176,24 +287,24 @@ p {
 
 /* Services Section */
 .services {
-    padding: 100px 0;
+    padding: clamp(2rem, 4vh, 3rem) 0;
     background-color: var(--background);
 }
 
 .section-title {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: clamp(1.5rem, 3vh, 2rem);
 }
 
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
+    gap: clamp(1rem, 2vw, 1.5rem);
 }
 
 .service-card {
     background-color: var(--background);
-    padding: 40px;
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
     border-radius: 3px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform var(--transition), box-shadow var(--transition);
@@ -205,8 +316,10 @@ p {
 }
 
 .service-card h3 {
-    margin-bottom: 20px;
+    font-size: clamp(1.375rem, 1.9vw, 1.625rem);
+    margin-bottom: clamp(0.75rem, 1.5vh, 1rem);
     color: var(--primary);
+    line-height: 1.3;
 }
 
 .service-card ul {
@@ -216,10 +329,11 @@ p {
 
 .service-card li {
     font-family: 'Raleway', sans-serif;
-    font-size: 18px;
-    margin-bottom: 12px;
-    padding-left: 25px;
+    font-size: clamp(1rem, 1.3vw, 1.25rem);
+    margin-bottom: clamp(0.5rem, 1vh, 0.75rem);
+    padding-left: 20px;
     position: relative;
+    line-height: 1.4;
 }
 
 .service-card li:before {
@@ -352,21 +466,26 @@ p {
 }
 
 /* Responsive Design */
+/* Tablet (768px - 968px) */
 @media (max-width: 968px) {
-    h1 {
-        font-size: 56px;
+    .header {
+        min-height: clamp(70px, 9vh, 110px);
     }
-
-    .hero-title {
-        font-size: 48px;
+    
+    .hero {
+        min-height: calc(100vh - clamp(70px, 9vh, 110px));
+        margin-top: clamp(70px, 9vh, 110px);
     }
 
     .hero-content {
         grid-template-columns: 1fr;
+        gap: clamp(1.5rem, 3vh, 2.5rem);
     }
 
     .hero-image {
         order: -1;
+        max-width: 400px;
+        margin: 0 auto;
     }
 
     .contact-content {
@@ -378,27 +497,90 @@ p {
     }
 }
 
+/* Mobile (640px - 768px) */
+@media (max-width: 768px) {
+    .header {
+        min-height: clamp(65px, 8vh, 100px);
+    }
+    
+    /* 4) Breakpoints : maîtrise l'échelle pour éviter le chevauchement sur mobile */
+    .logo {
+        width: clamp(8rem, 28vw, 10rem);
+    }
+    
+    .logo-img {
+        transform: scale(0.891); /* 0.99 * 0.9 = 10% de réduction supplémentaire */
+    }
+    
+    .hero {
+        min-height: min(90vh, 600px);
+        margin-top: clamp(65px, 8vh, 100px);
+        padding-block: clamp(1.5rem, 5vh, 2.5rem);
+    }
+    
+    .nav {
+        gap: clamp(0.75rem, 2vw, 1rem);
+    }
+}
+
+/* Small mobile (< 640px) */
 @media (max-width: 640px) {
-    h1 {
-        font-size: 42px;
+    .header {
+        min-height: clamp(60px, 7vh, 90px);
     }
-
-    h2 {
-        font-size: 32px;
-    }
-
-    .hero-title {
-        font-size: 36px;
-    }
-
+    
     .header-content {
         flex-direction: column;
-        gap: 20px;
+        gap: clamp(0.75rem, 2vh, 1.25rem);
+        align-items: stretch;
+    }
+    
+    .logo {
+        width: clamp(7rem, 32vw, 9rem);
+        justify-self: center;
+    }
+    
+    .logo-img {
+        transform: scale(0.8505); /* 0.945 * 0.9 = 10% de réduction supplémentaire */
+        transform-origin: center center;
+    }
+    
+    .hero {
+        margin-top: clamp(60px, 7vh, 90px);
     }
 
     .nav {
         flex-direction: column;
-        gap: 15px;
+        gap: clamp(0.625rem, 1.5vh, 0.9375rem);
         text-align: center;
+        justify-content: center;
+    }
+    
+    .hero {
+        min-height: min(90vh, 600px);
+        padding-block: clamp(1rem, 4vh, 2rem);
+    }
+    
+    .hero-content {
+        gap: clamp(1rem, 2.5vh, 1.5rem);
+    }
+    
+    .hero-image {
+        max-width: 100%;
+    }
+    
+    .hero-text {
+        padding-block-end: clamp(0.75rem, 2vh, 1.5rem);
+    }
+}
+
+/* Very small mobile (< 480px) */
+@media (max-width: 480px) {
+    .logo {
+        width: clamp(7rem, 32vw, 9rem);
+    }
+    
+    .logo-img {
+        transform: scale(0.8505); /* 0.945 * 0.9 = 10% de réduction supplémentaire */
     }
 }
